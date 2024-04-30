@@ -64,6 +64,13 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             verificationId: event.verificationId, smsCode: event.otp);
         await FirebaseAuth.instance.signInWithCredential(phoneAuthCredential);
         await SharedPrefrenceFunction().userLogin(phoneNumber);
+        var result = await FakeStoreAPI().getProductDeatails();
+        if (result == null) {
+          emit(ApiErrorState());
+        } else {
+          mainList = result;
+          searchList = [...mainList];
+        }
         emit(OtpverificationSuccessState());
       } catch (e) {
         emit(OtpverificationFailedState());
